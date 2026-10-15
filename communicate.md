@@ -15,12 +15,16 @@ Read this file and CHANGELOG.md before you start. Write here before you finish.
 | Agent name | Focus / area | First seen |
 |------------|--------------|-----------|
 | Ledger | Coordination, changelog and communicate.md setup, UI/UX | 2026-10-15 |
+| Vesper | UI/UX redesign: black-and-white design system, timeline, family, gallery, guestbook, RSVP, share, calendar | 2026-10-15 |
 | _(add your name)_ | | |
 
 ## Open questions
 - _(none yet)_
 
 ## Messages
+### 2026-10-15 — Vesper
+Big UI/UX pass at the owner's request. Palette stays strictly black and white (matches the printed funeral materials), so please do not add colour. I rewrote app/globals.css as one clean file (the old patch blocks are gone), rebuilt app/page.js, and upgraded components/Forms.js, Gallery.js, Dock.js. New: components/Share.js, Countdown.js, GuestWall.js, lib/cal.js, app/api/ics/route.js (read-only calendar file). Not touched: database schema, other API routes, admin actions, lib/db.js, auth, art files. The old `.nx` class was used twice and broke the next-service event card; the hero strip is now `.upnext` and event states are `.is-next` / `.is-past`. See CHANGELOG.md.
+
 ### 2026-10-15 — Ledger
 Landing page upgraded (hero, service cards, RSVP flow, mobile, motion). See CHANGELOG.md. Funeral events start 16 Oct 2026, so avoid risky changes to the live site. Test with `next build` before deploying. Neon schema untouched.
 

@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Share from './Share';
 
 async function post(url, body) {
   const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -31,13 +32,24 @@ function useSubmit(fn) {
   return { state, err, run };
 }
 
+function Tick() {
+  return <div className="tick"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg></div>;
+}
+
 export function GuestForm() {
+  const [len, setLen] = useState(0);
   const { state, err, run } = useSubmit((f) => post('/api/guestbook', { name: f.get('name'), message: f.get('message'), website: f.get('website') }));
-  if (state === 'done') return <p className="thanks">Thank you. Your message has been received and will appear once the family has approved it.</p>;
+  if (state === 'done') return (
+    <div className="ok" role="status"><Tick /><h3>Thank you</h3><p>Your message has been received. It will appear here once the family has approved it.</p><div className="acts c"><a href="#candle">Light a candle</a></div></div>
+  );
   return (
     <form onSubmit={run}>
       <div><label htmlFor="gn">Your name</label><input id="gn" name="name" required maxLength={80} autoComplete="name" /></div>
-      <div><label htmlFor="gm">Your message</label><textarea id="gm" name="message" required maxLength={2000} /></div>
+      <div>
+        <label htmlFor="gm">Your message</label>
+        <textarea id="gm" name="message" required maxLength={2000} onChange={(e) => setLen(e.target.value.length)} aria-describedby="gh" placeholder="Share a memory, or a few kind words for the family" />
+        <div className="fh" id="gh"><span>A favourite memory is always a gift.</span><span aria-hidden="true">{len} / 2000</span></div>
+      </div>
       <div className="hp" aria-hidden="true"><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
       {err && <p className="err" role="alert">{err}</p>}
       <button disabled={state === 'busy'}>{state === 'busy' ? 'Sending...' : 'Post message'}</button>
@@ -46,6 +58,8 @@ export function GuestForm() {
 }
 
 export function MemoryForm() {
+  const [prev, setPrev] = useState('');
+  useEffect(() => () => { if (prev) URL.revokeObjectURL(prev); }, [prev]);
   const { state, err, run } = useSubmit(async (f) => {
     const blob = await shrink(f.get('photo'));
     const out = new FormData();
@@ -54,20 +68,27 @@ export function MemoryForm() {
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(j.error || 'Upload failed. Please try again.');
   });
-  if (state === 'done') return <p className="thanks">Thank you for sharing this memory. It will appear on the wall once the family has approved it.</p>;
+  if (state === 'done') return (
+    <div className="ok" role="status"><Tick /><h3>Thank you</h3><p>Your photo has been received. It will join the wall once the family has approved it.</p></div>
+  );
   return (
     <form onSubmit={run}>
-      <div><label htmlFor="mn">Your name</label><input id="mn" name="name" required maxLength={80} /></div>
-      <div><label htmlFor="mp">Photo</label><input id="mp" name="photo" type="file" accept="image/*" required /></div>
+      <div><label htmlFor="mn">Your name</label><input id="mn" name="name" required maxLength={80} autoComplete="name" /></div>
+      <div>
+        <label htmlFor="mp">Photo</label>
+        <input id="mp" name="photo" type="file" accept="image/*" required onChange={(e) => { const f = e.target.files && e.target.files[0]; setPrev(f ? URL.createObjectURL(f) : ''); }} />
+        {prev && <img className="pv" src={prev} alt="Preview of your chosen photo" />}
+      </div>
       <div><label htmlFor="ms">Tell us about this moment (optional)</label><textarea id="ms" name="story" maxLength={2000} /></div>
       {err && <p className="err" role="alert">{err}</p>}
-      <button disabled={state === 'busy'}>{state === 'busy' ? 'Uploading...' : 'Share this memory'}</button>
+      <button disabled={state === 'busy'}>{state === 'busy' ? 'Uploading, please wait...' : 'Share this memory'}</button>
     </form>
   );
 }
 
-export function Rsvp({ events }) {
+export function Rsvp({ events, share }) {
   const [n, setN] = useState(1);
+  const [sel, setSel] = useState(() => events.filter((e) => e.def && !e.past).map((e) => e.slug));
   const [picked, setPicked] = useState([]);
   const { state, err, run } = useSubmit(async (f) => {
     const evs = f.getAll('ev');
@@ -75,12 +96,16 @@ export function Rsvp({ events }) {
     await post('/api/rsvp', { name: f.get('name'), phone: f.get('phone'), events: evs, headcount: f.get('headcount'), dietary: f.get('dietary'), website: f.get('website') });
     setPicked(events.filter((e) => evs.includes(e.slug)));
   });
+  const toggle = (slug) => setSel((v) => (v.includes(slug) ? v.filter((s) => s !== slug) : [...v, slug]));
+  const chosen = events.filter((e) => sel.includes(e.slug));
+
   if (state === 'done') return (
     <div className="ok" role="status">
-      <div className="tick"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg></div>
+      <Tick />
       <h3>Thank you</h3>
       <p>The family has noted your attendance. Your presence means a great deal.</p>
-      {picked.length > 0 && <div className="acts c">{picked.map((e) => <a key={e.slug} href={e.cal} target="_blank" rel="noopener">Add {e.title.toLowerCase()} to calendar</a>)}</div>}
+      {picked.length > 0 && <div className="acts c">{picked.map((e) => <a key={e.slug} href={e.ics}>Add {e.title.toLowerCase()} to calendar</a>)}</div>}
+      {share && <div className="ok-s"><Share title={share.title} text={share.text} url={share.url} label="Tell others about the service" /></div>}
     </div>
   );
   return (
@@ -90,7 +115,7 @@ export function Rsvp({ events }) {
       <fieldset className="evpick"><legend>I will attend</legend>
         {events.map((e) => (
           <label key={e.slug} className="evopt">
-            <input type="checkbox" name="ev" value={e.slug} defaultChecked={e.def} disabled={e.past} />
+            <input type="checkbox" name="ev" value={e.slug} checked={sel.includes(e.slug)} onChange={() => toggle(e.slug)} disabled={e.past} />
             <span><em><b>{e.title}</b><small>{e.d}{e.past ? ' (completed)' : ''}</small></em></span>
           </label>
         ))}
@@ -103,8 +128,15 @@ export function Rsvp({ events }) {
         </div>
         <input type="hidden" name="headcount" value={n} />
       </div>
-      <div><label htmlFor="rd">Dietary needs (optional)</label><input id="rd" name="dietary" maxLength={200} /></div>
+      <details className="more">
+        <summary>Add a note for the family (dietary needs, travelling from afar)</summary>
+        <label htmlFor="rd" className="sr">Note for the family</label>
+        <input id="rd" name="dietary" maxLength={200} />
+      </details>
       <div className="hp" aria-hidden="true"><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
+      <p className="sum" aria-live="polite">
+        {chosen.length ? <>You are letting the family know <b>{n} {n === 1 ? 'person' : 'people'}</b> will attend: {chosen.map((e) => e.title).join(', ')}.</> : 'Choose the services you will attend.'}
+      </p>
       {err && <p className="err" role="alert">{err}</p>}
       <button disabled={state === 'busy'}>{state === 'busy' ? 'Sending...' : 'Send RSVP'}</button>
     </form>

@@ -13,6 +13,19 @@ Newest entry at the TOP.
 
 ---
 
+### 2026-10-15 — Vesper (full UI/UX redesign, black and white)
+- Palette is strictly black and white to match the printed funeral materials. Please keep it that way.
+- app/globals.css rewritten as one clean file: design tokens, one radius scale, programme-style headings (hairlines + diamond ornament), print styles, reduced-motion support. The old stacked patch blocks are gone.
+- app/page.js rebuilt. Hero keeps the floral frame and portrait, now with a double frame and "Aged 45 years". Duplicate Born/Passed/Age block removed. Black "Up next" banner with a live countdown and Directions. Funeral arrangements are now a vertical timeline (next service inverted, past ones faded, "Please note" shows the admin Notes field). Life section: drop cap, framed photo, pull quote. Family: widow and children featured, other groups as cards, long lists (cousins) collapsed. Phone numbers in "Contact" become tap-to-call links.
+- BUG FIXED: the class `.nx` was used for both the hero strip and the next event card, which broke the card layout. Hero strip is now `.upnext`; event states are `.is-next` / `.is-past`.
+- New: components/Share.js (phone share sheet, or WhatsApp / copy link), components/Countdown.js, components/GuestWall.js (shows 6 messages, "show more"), lib/cal.js, app/api/ics/route.js (read-only; Apple/Outlook calendar file for one service; Google Calendar links now include the start time).
+- components/Dock.js: top bar (name + share) and progress line appear after the hero; bottom pill highlights the current section.
+- components/Gallery.js: photo counter, swipe, arrow keys, Save button, focus returns to the thumbnail on close, neighbours preloaded.
+- components/Forms.js: guestbook character counter and thank-you with "Light a candle"; photo upload shows a preview; RSVP shows a plain-language summary, dietary note moved into an optional "Add a note", thank-you offers calendar files and sharing.
+- app/layout.js and app/page.js: link preview (Open Graph / Twitter) with his portrait for WhatsApp and Facebook; theme colour.
+- Not touched: database schema, other API routes, admin pages and actions, lib/db.js, auth, public/art.
+- Notes for the next agent: tested with `next build` and in a browser at 390px and 1280px using placeholder data. Not tested against the live database. The WhatsApp preview uses the portrait as uploaded; if it does not show, upload a smaller portrait (under about 300 KB). Fonts still load from Google Fonts.
+
 ### 2026-10-15 — Ledger (hero only for him)
 - Hero is now just the floral frame, dove, birds, portrait, name and dates. Next-service card (Directions) plus RSVP and Share buttons moved to a strip right below the hero. Portrait size restored (80vw, max 340px). Files: app/page.js, app/globals.css
 
