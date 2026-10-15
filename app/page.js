@@ -12,10 +12,10 @@ export const dynamic = 'force-dynamic';
 
 const SITE = 'https://ebenezer-memorial.vercel.app';
 const FAMILY = [
-  ['Widow', ['Regina Nartey']],
+  ['Widow', ['Mrs Regina Nartey (Zanoo)']],
   ['Children', ['Late Bernicesa Nartey', 'Godbless Nartey', 'Christable Nartey', 'Davis Luck Nartey']],
   ['Parents', ['Father: Henry Agyake', 'Mother: Rita Dede Agah']],
-  ['Chief mourners', ['Asafostse Aga Kwabena II', 'Nene Aga Tetteh', 'Waku Maste Emanuel']],
+  ['Chief mourners', ['Asafostse Aga Kwabena II', 'Nene Aga Tetteh', 'Waku Maste Emanuel', 'Raphael Seth Zanoo']],
   ['Brothers and sisters', ['Agah Rachel', 'Bryan Yiadom']],
   ['Cousins', ['Happy Agah', 'Elizabeth Agah', 'Princess Agah', 'Prince Agah', 'Abraham Agah', 'Daniel Agah', 'Eunice Agah', 'Bendicta Agah', 'Joyce Agah', 'Larry Agah', 'Gloria Agah', 'Marty Agah']],
 ];
@@ -240,6 +240,7 @@ export default async function Home() {
         <p className="fd">{born} <i aria-hidden="true" /> {c.passed}</p>
         <p>With love from the Nartey and Agah families</p>
         <div className="fa"><Share title={share.title} text={share.text} url={share.url} label="Share this page" className="btn light" /><a className="btn ghost" href="#top">Back to top</a></div>
+        <p className="sig"><span>Designed by</span> <b>Lil G</b></p>
       </footer>
 
       <Dock name={full} share={share} />

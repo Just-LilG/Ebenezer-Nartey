@@ -164,11 +164,11 @@ footer .shr-m { top: auto; bottom: calc(100% + 8px); left: 50%; right: auto; tra
 
 /* ---- his life ---- */
 .story { display: grid; gap: 34px; align-items: center; max-width: 980px; margin: 0 auto; }
-.pf { position: relative; max-width: 420px; margin: 0 auto; }
-.pf::before { content: ''; position: absolute; inset: 14px -14px -14px 14px; border: 1.5px solid var(--ink); border-radius: var(--r-lg); }
-.pf img { position: relative; width: 100%; border-radius: var(--r-lg); display: block; aspect-ratio: 4/5; object-fit: cover; object-position: 50% 15%; }
+.pf { position: relative; max-width: 420px; margin: 0 auto; padding: 0 14px 14px 0; }
+.pf::before { content: ''; position: absolute; top: 14px; left: 14px; right: 0; bottom: 0; border: 1.5px solid var(--ink); border-radius: var(--r-lg); }
+.pf img { position: relative; width: 100%; height: auto; max-height: 560px; border-radius: var(--r-lg); display: block; object-fit: cover; object-position: 50% 30%; background: #E8E8E8; }
 .st p { max-width: 58ch; font-size: 20px; margin: 0 0 18px; }
-.st p.first::first-letter { font-family: var(--serif); float: left; font-size: 4.1em; line-height: .82; padding: 6px 12px 0 0; }
+.st p.first::first-letter { font-family: var(--serif); float: left; font-size: 3.6em; line-height: .8; padding: 6px 10px 0 0; margin-top: 2px; }
 blockquote { font-family: var(--serif); font-style: italic; font-size: clamp(26px, 5vw, 38px); line-height: 1.22; margin: 34px 0 0; padding: 18px 0 0; border-top: 1.5px solid var(--ink); }
 blockquote::before { content: '\201C'; display: block; height: 40px; font-size: 72px; line-height: 1; font-style: normal; }
 .tbd { background: #fff; border: 1.5px dashed #BDBDBD; border-radius: var(--r-sm); padding: 14px 18px; font-size: 15px; color: var(--mute); }
@@ -290,6 +290,8 @@ footer h3 { font-size: clamp(34px, 7vw, 60px); margin-bottom: 10px; }
 footer p { color: #B5B5B5; margin: 0 0 8px; }
 footer .fd { display: flex; align-items: center; justify-content: center; gap: 12px; color: #fff; font-size: 17px; margin-bottom: 8px; }
 footer .fd i { width: 22px; height: 1px; background: #fff; opacity: .5; }
+.sig { margin: 44px 0 0; display: flex; align-items: baseline; justify-content: center; gap: 8px; color: #8A8A8A; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; }
+.sig b { font-family: 'Pinyon Script', cursive; font-weight: 400; font-size: 30px; letter-spacing: .02em; text-transform: none; color: #fff; line-height: 1; }
 .fa { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 30px; }
 
 /* ---- top bar, progress line, quick links ---- */
